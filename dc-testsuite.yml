@@ -1,0 +1,54 @@
+services:
+  tiger-erzpt-testsuite:
+    build:
+      context: .
+    container_name: tiger-erzpt-testsuite
+    environment:
+      - MAVEN_OPTS=-Dcucumber.filter.tags=${TESTSUITE_TESTS}
+    ports:
+      - "9010:9010"
+      - "9011:9011"
+      - "443:443"
+      - "11112:11112"
+    volumes:
+      - ./tiger.yaml:/app/tiger.yaml:ro
+      - ./data.yaml:/app/data.yaml:ro
+      - testsuite-maven:/home/ecctester/.m2/repository/:rw
+      - ./report:/app/report:rw
+
+  # IDP token service (internal precondition use only)
+  idp-client-service:
+    image: gematik1/erp-idp-client:2.0.2
+
+  # VAU Request Encryption for practitioners (internal precondition use only)
+  vau-encrypting-proxy:
+    image: gematik1/erp-vau-proxy-client:1.0.30
+    environment:
+       - FORWARD_TARGET_URL=https://fd-dev.erezept-instanz1.titus.gematik.solutions
+
+  # VAU Request Encryption for patients (internal precondition use only)
+  vau-encrypting-proxy-versicherten:
+    image: gematik1/erp-vau-proxy-client:1.0.30
+    environment:
+      - FORWARD_TARGET_URL=https://erp-dev.app.ti-dienste.de
+
+  # VAU Server as part of vau translator (internal use only)
+  vauServer:
+    image: gematik1/erp-vau-proxy-server:1.0.14
+    environment:
+      - ENCRYPTION_SERVICE_URL=http://vauCryptoServer:8080
+      - TARGET_URL=http://vau-encrypting-client:8080
+
+  # Cryptography services for VAU operations (internal use only)
+  vauCryptoServer:
+    image: gematik1/erp-vau-crypto-service
+
+  # VAU Request Encryption as part of vau translator (internal use only)
+  vau-encrypting-client:
+    image: gematik1/erp-vau-proxy-client:1.0.30
+    environment:
+       - FORWARD_TARGET_URL=https://fd-dev.erezept-instanz1.titus.gematik.solutions
+
+volumes:
+  testsuite-maven:
+    name: testsuite-maven

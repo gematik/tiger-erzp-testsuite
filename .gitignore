@@ -1,0 +1,55 @@
+!.mvn/wrapper/maven-wrapper.jar
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/build/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+### VisualStudioCode ###
+.vscode/*
+
+
+nb-configuration.xml
+
+/data/2_daten.p7s
+/data/encData_in.p7
+/data/signedData_in.p7s
+/data/2_daten_encrypted.cms
+/nbproject/
+/contracts/nb-configuration.xml
+
+**/target/**
+**/out/**
+*.log
+**/logs/**
+/config/git.properties
+
+# doxygen
+doxygen
+
+/.idea/
+/.vscode/
+jenkinsfiles
+postman
+README_INTERN.md
+data_internal.yaml
+dc-testsuite.override.yml
+**/src/test/**/*_intern.feature

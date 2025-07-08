@@ -1,0 +1,260 @@
+:doctype: book
+ifndef::env-github[]
+image::doc/Gematik_Logo_Flag_With_Background.png[logo,width=200,height=47,role=right]
+endif::[]
+ifdef::env-github[]
+++++
+<img align="right" width="250" height="47" src="doc/Gematik_Logo_Flag_With_Background.png"/> <br/>
+++++
+endif::[]
+
+= E-Rezept-Testsuite
+
+== Inhaltsverzeichnis
+
+* <<_einführung,Einführung>>
+* <<_setup,Setup>>
+* <<_konfiguration,Konfiguration>>
+* <<_routing,Routing>>
+* <<_testausführung,Testausführung>>
+* <<_port_tabelle,Port Tabelle>>
+
+== Einführung
+
+Die E-Rezept-Testsuite unterstützt Primärsysteme bei der Prüfung auf ECC Kompatibilität. Dazu werden ausgewählte UseCases aus dem Bereich eRezept mit angepassten Konnektoroperationen unterstützt.
+Der  https://github.com/gematik/tiger-ptv6-proxy[Tiger-PTV6-Proxy] wird vor den echten PTV5-Konnektor gesetzt und passt die Anfragen so an, dass alle kryptografischen Verfahren mit ECC durchgeführt werden. Dazu müssen unbedingt **Karten der Generation 2.1** benutzt werden.
+
+== Setup
+
+Die grundsätzlichen technischen Voraussetzungen sehen wie folgt aus:
+
+image::/doc/img/setup.png[Setup]
+
+* Die Testsuite wird auf einem Tester-PC ausgeführt.
+* Auf diesem läuft auch das Primärsystem.
+* Der Konnektor ist korrekt konfiguriert und erreichbar.
+* Auf diesem Testrechner kann nun die Tiger-Testsuite gestartet werden, ebenso wie der Tiger-Proxy.
+* Die Kommunikation zwischen Primärsystem und der TI muss nun über den Tiger-Proxy geleitet werden.
+* Dieser kann die Kommunikation aufzeichnen und analysieren.
+* Die Testsuite kann Artefakte von Maven Central aus dem Internet beziehen.
+
+== Konfiguration
+
+=== TLS Konfiguration
+
+Der Tiger-Proxy unterstützt TLSv1.2 und gibt Server Zertifikate zurück, welche den Zertifikaten des Fachdienstes in der RU entspricht. Siehe folgende Datei:
+
+* `erp-ref.app.ti-dienste.de_NIST_X509.p12`
+
+Zusätzlich wurden die unterstützten CipherSuiten wie folgt eingeschränkt:
+
+* `TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256`
+* `TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384`
+
+== Routing
+
+Es muss das Routing der Nachrichten über den Tiger-Proxy der E-Rezept-Testsuite erfolgen, um eine Auswertung dieser zu ermöglichen. Der Tiger-Proxy leitet die Anfragen an den Fachdienst weiter. Wichtig ist hierbei auch, dass in dem äußeren HTTP-Request auch der HTTP-Header "Host" für die Anfrage an den entsprechenden Fachdienst gesetzt ist, damit der Tiger-Proxy die Anfrage entsprechend nach dem Mitschnitt weiterleiten kann.
+
+Beispiel für den HTTP-Header, damit der Tiger-Proxy korrekt routen kann.
+[source,httprequest]
+----
+Host: erp-ref.zentral.erp.splitdns.ti-dienste.de
+----
+
+Es gibt keine Vorgabe WIE diese Umleitung erfolgen muss, zwei Wege scheinen jedoch sinnvoll:
+
+=== Forward Proxy (Variante 1)
+
+In dieser Konfiguration kann die E-Rezept-Testsuite als Forward-Proxy für das Primärsystem eingerichtet werden.
+Die Routen sind entsprechend konfiguriert, damit der Verkehr hier an den eRp Fachdienst weitergeleitet wird.
+
+Hierbei sind folgende Punkte zu beachten:
+
+* Primärsystem seitig wird die E-Rezept-Testsuite als Proxy konfiguriert (e.g. `localhost:443`). Hiermit werden die Requests über die E-Rezept-Testsuite an den eRp Fachdienst gesendet. Ein Request an `https://erp-ref.zentral.erp.splitdns.ti-dienste.de/foobar`, via E-Rezept-Testsuite mit `localhost:443` entspricht somit `curl -x localhost:443 erp-ref.zentral.erp.splitdns.ti-dienste.de/foobar`)
+* Dabei ist darauf zu achten, dass der HTTP Header im (äußeren) HTTP Request dennoch den FQDN des Fachdienstes enthält (e.g `Host: erp-ref.zentral.erp.splitdns.ti-dienste.de`).
+* Eine zusätzliche Manipulation der DNS Auflösung (Variante 2) in der `hosts` Datei ist nicht notwendig.
+
+=== DNS Manipulation (Variante 2)
+
+Alternativ kann die DNS-Auflösung beeinflusst werden, z.B. über das Editieren der Host-Einträge im Testsystem selbst (e.g. /etc/hosts). Hier werden die Hostnamen des Fachdienstes auf die IP-Adresse des Testrechners, wo der Tiger-Proxy mit dem Port 443 läuft, umgeleitet.
+
+Beispiel, wenn das Primärsystem auf dem gleichen Rechner läuft, wie die Testsuite mit dem Tiger-Proxy:
+
+[source,shell]
+----
+127.0.0.1    erp-ref.zentral.erp.splitdns.ti-dienste.de
+127.0.0.1    erp-ref.app.ti-dienste.de
+----
+
+[IMPORTANT]
+====
+Diese Einträge sollten nach der Durchführung der E-Rezept-Testsuite wieder entfernt werden, da es ansonsten zu einem unbeabsichtigten Fehlverhalten führt, wenn die E-Rezept-Testsuite nicht mehr aktiv läuft und somit die Nachrichten nicht mehr an den eRp Fachdienst weitergeleitet werden.
+====
+
+=== Konnektor Konfiguration
+
+Alle Konnektoraufrufe müssen über den TigerProxy geroutet werden, damit der PTV6-Proxy den ECC Modus garantieren kann. Der Tiger-Proxy erwartet Konnektor Anfragen auf Port 11112. Die Adresse des echten Konnektors muss in der data.yaml konfiguriert sein. Weitere Einstellungsoptionen und mehr Details können auf der https://github.com/gematik/tiger-ptv6-proxy[zugehörigen GitHub Seite des PTV6-Proxy] eingesehen werden.
+
+
+=== Konfiguration von Git
+
+Bei dem Checkout für eine lokale Kopie von dem Repository ist darauf zu achten, dass die Dateien nicht verändert werden durch ein Checkout selbst. Hierzu ist zu prüfen, dass folgenden Git Einstellungen (`.gitconfig`) für den Checkout des Repos genutzt werden:
+
+[source]
+----
+[core]
+  autocrlf = false
+----
+
+Dies kann mit folgenden Befehlen erreicht werden, je nachdem auf welcher Ebene die Einstellung getroffen werden soll:
+
+[source, shell]
+----
+git config --system core.autocrlf false   # per-system solution
+git config --global core.autocrlf false   # per-user solution
+git config --local core.autocrlf false    # per-project solution
+----
+
+
+=== Proxy Konfiguration für Maven (Docker)
+
+Da der E-Rezept-Testsuite Container während der Ausführung Maven-Artefakte bezieht, muss das Internet für den Container erreichbar sein. Sollte das Internet nur über einen Proxy-Server erreichbar sein, müssen die Einstellungen in der [./settings.xml](./settings.xml) für die Ausführung des PS-Testsuite Containers angepasst werden. Bitte beachten Sie, dass der Parameter `<active>true</active>` gesetzt werden muss, um die Einstellungen zu aktivieren und das Docker-Volume `testsuite-maven` gelöscht werden muss, um die Änderungen zu übernehmen.
+
+Dazu müssen die folgenden Einträge angepasst werden:
+
+```xml
+  <proxy>
+    <id>optional</id>
+    <active>true</active>
+    <protocol>https</protocol>
+    <host>proxy.example.com</host>
+    <port>8080</port>
+    <username>user</username>
+    <password>password</password>
+    <nonProxyHosts>localhost|127.0.0.1</nonProxyHosts>
+  </proxy>
+```
+
+=== Hinweise für APS Hersteller
+Es gibt 6 Tests (alle mit 4x6, 3x7 und 4x9 im Namen), welche Patienteninteraktion (Patient holt Medication, Patient sendet Zuweisung) erfordern.
+Setzen Sie dafür Werte der Properties "user_agent", "x_api_key", "aps_telematik_id" in der data.yaml. Ansonsten werden die Tests fehlschlagen.
+
+== Testausführung
+
+Die E-Rezept-Testsuite kann nur in einem Docker-Container ausgeführt werden.
+Per Default starten die PVS ECC-Testfälle. Um die Testfälle für AVS zu starten kann die .env Datei entsprechend bearbeitet werden.
+
+=== Lokal (Docker)
+
+Die Testsuite kann mit einem Docker-Compose gestartet werden.
+
+[source,bash]
+----
+docker compose -f dc-testsuite.yml up --abort-on-container-exit
+----
+
+=== WorkflowUI
+
+Die Durchführung der Testsuite geschieht über die von der E-Rezept-Testsuite bereitgestellte Webseite der WorkflowUI.
+Hierzu wird die folgende Adresse im Browser aufgerufen, wenn sich die Testsuite auf dem lokalen Rechner gestartet wurde: http://localhost:9010.
+Beim Starten als Docker Container wird der entsprechende Link im Log ausgegeben, sobald die Seite aufrufbar ist.
+
+[source,bash]
+----
+========================================================================================================================
+  ____ _____  _    ____ _____ ___ _   _  ____  __        _____  ____  _  _______ _     _____        __  _   _ ___
+ / ___|_   _|/ \  |  _ \_   _|_ _| \ | |/ ___| \ \      / / _ \|  _ \| |/ /  ___| |   / _ \ \      / / | | | |_ _|
+ \___ \ | | / _ \ | |_) || |  | ||  \| | |  _   \ \ /\ / / | | | |_) | ' /| |_  | |  | | | \ \ /\ / /  | | | || |
+  ___) || |/ ___ \|  _ < | |  | || |\  | |_| |   \ V  V /| |_| |  _ <| . \|  _| | |__| |_| |\ V  V /   | |_| || |   _ _ _
+ |____/ |_/_/   \_\_| \_\|_| |___|_| \_|\____|    \_/\_/  \___/|_| \_\_|\_\_|   |_____\___/  \_/\_/     \___/|___| (_|_|_)
+
+========================================================================================================================
+09:21:12.065 [main ] INFO  d.g.t.t.l.TigerDirector - Waiting for workflow Ui to fetch status...
+09:21:12.065 [main ] INFO  d.g.t.t.l.TigerDirector - Workflow UI http://localhost:9010
+----
+
+Nachdem der Testfall gestartet wurde, wartet die Testdurchführung auf eine Benutzerinteraktion, um mit der Prüfung der mitgeschnittenen Nachrichten vorzufahren. D.h. das in diesem Moment die Verordnung erstellt werden muss, *bevor* man die Testdurchführung fortführt. Für die anderen Testfälle wird ebenfalls in der UI jeweils darauf gewartet, dass die entsprechenden UseCases vom Primärsystem ausgeführt wurden.
+
+image::/doc/img/continue_dialog_testsuite_erp.png[Continue Dialog in Testsuite]
+
+== Port Tabelle
+
+|=====================================================
+| Service                      | Port  | Protocol
+| Tiger Testsuite (WorkflowUI) | 9010  | http
+| Tiger-Proxy Admin Port       | 9011  | http
+| Tiger-Proxy Proxy Port       | 443   | http / https
+| Tiger-Proxy Konnektor Port   | 11112 | http
+|=====================================================
+
+=== Testreport
+
+Die Testergebnisse selbst werden unter `./report` als zip Datei abgelegt, wenn die Ausführung über den Quit Button in der WorkflowUI beendet wird.
+
+=== Testreport aus Docker Container
+
+Um diese Datei aus dem Docker Container in das lokale System zu kopieren, kann folgender Befehl genutzt werden:
+
+[source,bash]
+----
+docker cp ecc-erp-testsuite:/app/report/ecc-ep-testsuite-test-report.zip .
+----
+
+Eine weitere Möglichkeit ist, die Report ZIP Datei über die Anwendung DockerDesktop herunterzuladen.
+
+
+== Troubleshooting / FAQs
+
+=== Starten der Testsuite (Docker)
+
+==== java.nio.file.AccessDeniedException: /.m2/repository/org
+
+Der Zugriff auf das Docker Volume schlägt fehl.
+
+*Variante 1*
+
+Das Volume mit der gleichen Bezeichnung schon existiert und wurde von einer  anderen, möglicherweise älteren, Version der E-Rezept-Testsuite erstellt wurde.
+Man muss das Volume einmal löschen und bei Start der neuen Testsuite wird es wieder angelegt.
+
+[source]
+----
+$> docker compose -f dc-testsuite.yml rm
+$> docker volume rm -f ecc-erp-testsuite-maven
+$> docker compose -f dc-testsuite.yml up
+----
+
+*Variante 2 (Linux)*
+
+Bitte prüfen Sie vor dem Start der Testsuite, ob Sie das `.docker` Verzeichnis löschen können und starten sie die Testsuite im Anschluss noch einmal.
+
+*Variante 3 (ohne Docker Volume)*
+
+Eine weitere Möglichkeit ist auf die Nutzung des Docker Volume zu verzichten. Der Nachteil hierbei ist, dass die Maven Artefakte bei jedem Start der Testsuite erneut heruntergeladen werden müssen, was mehr Zeit in Anspruch nimmt. Hierzu wird die Zeile `- testsuite-maven:/.m2` wie folgt mit einem Hash (#) auskommentiert.
+
+[source]
+----
+    volumes:
+      - ./tiger.yaml:/app/tiger.yaml:ro
+      - ./data.yaml:/app/data.yaml:ro
+      #- testsuite-maven:/.m2/repository:rw
+      - ./report:/app/report:rw
+----
+
+
+== License
+
+Copyright 2025 gematik GmbH
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
+
+See the [LICENSE](./LICENSE) for the specific language governing permissions and limitations under the License.
+
+== Additional Notes and Disclaimer from gematik GmbH
+
+1. Copyright notice: Each published work result is accompanied by an explicit statement of the license conditions for use. These are regularly typical conditions in connection with open source or free software. Programs described/provided/linked here are free software, unless otherwise stated.
+2. Permission notice: Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions::
+1. The copyright notice (Item 1) and the permission notice (Item 2) shall be included in all copies or substantial portions of the Software.
+2. The software is provided "as is" without warranty of any kind, either express or implied, including, but not limited to, the warranties of fitness for a particular purpose, merchantability, and/or non-infringement. The authors or copyright holders shall not be liable in any manner whatsoever for any damages or other claims arising from, out of or in connection with the software or the use or other dealings with the software, whether in an action of contract, tort, or otherwise.
+3. The software is the result of research and development activities, therefore not necessarily quality assured and without the character of a liable product. For this reason, gematik does not provide any support or other user assistance (unless otherwise stated in individual cases and without justification of a legal obligation). Furthermore, there is no claim to further development and adaptation of the results to a more current state of the art.
+3. Gematik may remove published results temporarily or permanently from the place of publication at any time without prior notice or justification.
+4. Please note: Parts of this code may have been generated using AI-supported technology.’ Please take this into account, especially when troubleshooting, for security analyses and possible adjustments.

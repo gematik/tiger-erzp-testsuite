@@ -1,0 +1,24 @@
+idp:
+  scope: "EREZEPTDEV"
+  discoveryDocumentAddress: "https://idp-ref.app.ti-dienste.de/.well-known/openid-configuration"
+  clientId: "gematikTestPs"
+  redirectUrl: "http://test-ps.gematik.de/erezept"
+
+address_fachdienst: "http://vau-encrypting-proxy"
+address_fachdienst_fdv: "http://vau-encrypting-proxy_versicherten"
+idp_client_service: "http://idp-client-service"
+user_agent_pvs: "gematik-titus-tester-avs/2.0.0/GEMtestpvs"
+user_agent_avs: "gematik-titus-tester-avs/2.0.0/GEMtestavs"
+
+# bitte setzen, wenn Sie ein APS Hersteller sind und Tests mit Patienteninteraktion haben (betrifft alle 4x6, 4x7, 4x9 Tests)
+user_agent: ""
+x_api_key: ""
+aps_telematik_id: ""
+
+dockerservices:
+  idp: 
+    address: idp-client-service:8080
+  vauencryptingproxy:
+    address: vau-encrypting-proxy:8080
+  vauencryptingproxypatient:
+    address: vau-encrypting-proxy-versicherten:8080
