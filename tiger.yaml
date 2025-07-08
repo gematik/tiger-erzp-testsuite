@@ -1,0 +1,76 @@
+tigerProxy:
+  activeForwardAllLogging: true
+  skipTrafficEndpointsSubscription: false
+  proxyPort: 443
+  adminPort: 9011
+  activateRbelParsingFor:
+    - asn1
+    - erp-vau
+    - OCSP
+  keyFolders:
+    - "src/test/resources/erp-vau"
+  fileSaveInfo.writeToFile: true
+  activateForwardAllLogging: false
+  tls:
+    serverIdentities:
+      - "src/test/resources/erp-dev.app.ti-dienste.de_NIST_X509.p12;00"
+      - "src/test/resources/erp-ref.app.ti-dienste.de_NIST_X509.p12;00"
+      - "src/test/resources/idp-ref.zentral.idp.splitdns.ti-dienste.de_NIST_X509.p12;00"
+      - "src/test/resources/localhostIdentity.p12;00"
+    serverSslSuites:
+      - "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256"
+      - "TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384"
+    masterSecretsFile: target/tlsSecrets.txt
+  # proxy configuration
+  #forwardToProxy:
+  #  hostname: 10.11.98.80
+  #  port: 8080
+  rewriteHostHeader: true
+  proxyRoutes:
+    # route für den IDP
+    - from: /
+      to: https://10.31.196.4:443/
+      hosts: ["idp-ref.zentral.idp.splitdns.ti-dienste.de"]
+    # route für eRp RU Fachdienst
+    - from: /
+    #  to: https://10.31.195.10:443/
+      to: http://vauServer:8080
+      hosts: ["erp-ref.zentral.erp.splitdns.ti-dienste.de", "erp-ref.app.ti-dienste.de", "subscription-ref.zentral.erp.splitdns.ti-dienste.de"]
+    # route für eRp RU-DEV Fachdienst
+    - from: /
+      to: https://10.31.194.12:443/
+      hosts: ["erp-dev.zentral.erp.splitdns.ti-dienste.de", "erp-dev.app.ti-dienste.de", "subscription-dev.zentral.erp.splitdns.ti-dienste.de"]
+    - from: /
+      to: http://${data.dockerservices.idp.address}
+      hosts: ["idp-client-service"]
+    - from: /
+      to: http://${data.dockerservices.vauencryptingproxy.address}
+      hosts: ["vau-encrypting-proxy"]
+    - from: /
+      to: http://${data.dockerservices.vauencryptingproxypatient.address}
+      hosts: ["vau-encrypting-proxy_versicherten"]
+
+
+lib:
+  activateWorkflowUi: "true"
+  startBrowser: "false"
+  workflowUiPort: 9010
+  trafficVisualization: true
+  runTestsOnStart: true
+
+additionalConfigurationFiles:
+  - filename: data.yaml
+    baseKey: data
+# for gematik internal testing
+#  - filename: data_internal.yaml
+#    baseKey: data
+
+logging:
+  level:
+    # activate tracing for a specific class
+    de.gematik.test.tiger.testenvmgr.TigerTestEnvMgr: TRACE
+    # activate tracing for all classes and subpackages of a package
+    de.gematik.test.tiger.proxy: TRACE
+    # activate tracing for the local Tiger Proxy. This logger has a special name due to its importance in the tiger test framework
+    localTigerProxy: TRACE
+    de.gematik.test.tiger.glue.TigerGlue: TRACE

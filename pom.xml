@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>de.gematik</groupId>
+    <artifactId>tiger-erzp-testsuite</artifactId>
+    <version>1.0.0</version>
+
+    <distributionManagement>
+        <repository>
+            <id>releases</id>
+            <url>${releaseDeploymentRepository}</url>
+        </repository>
+        <snapshotRepository>
+            <id>snapshots</id>
+            <url>${snapshotDeploymentRepository}</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <version.tiger>4.0.7</version.tiger>
+        <spotless-maven-plugin.version>2.40.0</spotless-maven-plugin.version>
+        <spotless.google-java-format.version>1.18.1</spotless.google-java-format.version>
+        <version.junit.platform>1.11.4</version.junit.platform>
+        <version.bouncycastle>1.78.1</version.bouncycastle>
+        <dss.version>5.13.1</dss.version>
+        <!-- necessary to run with tiger 4.0.7 due to bug in 3.5.3 -->
+        <version.maven-surefire-plugin>3.5.2</version.maven-surefire-plugin>
+        <version.maven-failsafe-plugin>3.5.2</version.maven-failsafe-plugin>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>de.gematik.test</groupId>
+                <artifactId>tiger-bom</artifactId>
+                <version>${version.tiger}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>de.gematik.test</groupId>
+            <artifactId>tiger-test-lib</artifactId>
+            <version>${version.tiger}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcprov-jdk18on</artifactId>
+            <version>${version.bouncycastle}</version>
+        </dependency>
+        <dependency>
+            <groupId>de.gematik.test</groupId>
+            <artifactId>tiger-zion</artifactId>
+            <version>${version.tiger}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-suite</artifactId>
+            <version>${version.junit.platform}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- dss -->
+        <dependency>
+            <groupId>eu.europa.ec.joinup.sd-dss</groupId>
+            <artifactId>dss-utils-apache-commons</artifactId>
+            <version>${dss.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>eu.europa.ec.joinup.sd-dss</groupId>
+            <artifactId>dss-cades</artifactId>
+            <version>${dss.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>eu.europa.ec.joinup.sd-dss</groupId>
+            <artifactId>dss-token</artifactId>
+            <version>${dss.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- javax.activation/activation is needed by dss libs -->
+        <dependency>
+            <groupId>javax.activation</groupId>
+            <artifactId>activation</artifactId>
+            <version>1.1.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.bitbucket.b_c</groupId>
+            <artifactId>jose4j</artifactId>
+            <version>0.9.6</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.2.0</version>
+                <executions>
+                    <execution>
+                        <id>copy-resources</id>
+                        <phase>generate-test-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${basedir}</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>src/test/resources</directory>
+                                    <includes>
+                                        <include>*.yaml</include>
+                                    </includes>
+                                    <filtering>true</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>de.gematik.test</groupId>
+                <artifactId>tiger-maven-plugin</artifactId>
+                <version>${version.tiger}</version>
+                <executions>
+                    <execution>
+                        <configuration>
+                            <!-- mandatory -->
+                            <glues>
+                                <glue>de.gematik.test.tiger.glue</glue>
+                                <glue>de.gematik.test.tiger.ptv6.glue</glue>
+                                <glue>glue</glue>
+                                <!-- add your packages here -->
+                            </glues>
+                            <!-- optional -->
+                            <!--suppress UnresolvedMavenProperty -->
+                            <driverClassName>TestDriver${ctr}IT</driverClassName>
+                        </configuration>
+                        <phase>generate-test-sources</phase>
+                        <id>generate-tiger-drivers</id>
+                        <goals>
+                            <goal>generate-drivers</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>generate-tiger-report</id>
+                        <goals>
+                            <goal>
+                                generate-serenity-reports
+                            </goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${version.maven-surefire-plugin}</version>
+                <configuration>
+                    <skipTests>true</skipTests>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.7.1</version>
+                <configuration>
+                    <appendAssemblyId>true</appendAssemblyId>
+                    <descriptors>
+                        <descriptor>src/main/assembly/zip-test-report.xml</descriptor>
+                    </descriptors>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>zip-test-report</id>
+                        <phase>post-integration-test</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>${version.maven-failsafe-plugin}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <!--
+                        WorkflowUI needs this to allow it to block execution of maven,
+                        else maven will try to kill and destroy the tiger spring boot apps
+                    -->
+                    <testFailureIgnore>true</testFailureIgnore>
+                    <forkedProcessExitTimeoutInSeconds>18000</forkedProcessExitTimeoutInSeconds>
+                    <systemPropertyVariables>
+                        <cucumber.filter.tags>${TESTSUITE_TESTS}</cucumber.filter.tags>
+                    </systemPropertyVariables>
+                    <includes>
+                        <!-- adapt to the class names of your driver classes -->
+                        <include>**/TestDriver*IT.java</include>
+                    </includes>
+<!--                    <systemPropertyVariables>-->
+<!--                        <cucumber.filter.tags>${cucumber.tags}</cucumber.filter.tags>-->
+<!--                    </systemPropertyVariables>-->
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>com.diffplug.spotless</groupId>
+                <artifactId>spotless-maven-plugin</artifactId>
+                <version>${spotless-maven-plugin.version}</version>
+                <configuration>
+                    <formats>
+                        <format>
+                            <includes>
+                                <include>**/*.yml</include>
+                            </includes>
+                            <excludes>
+                                <exclude>**/target/**/*</exclude>
+                            </excludes>
+                            <trimTrailingWhitespace/>
+                            <endWithNewline/>
+                            <indent>
+                                <spaces>true</spaces>
+                                <spacesPerTab>2</spacesPerTab>
+                            </indent>
+                        </format>
+                    </formats>
+                    <java>
+                        <toggleOffOn/>
+                        <googleJavaFormat>
+                            <version>${spotless.google-java-format.version}</version>
+                            <style>GOOGLE</style>
+                            <reflowLongStrings>true</reflowLongStrings>
+                        </googleJavaFormat>
+                    </java>
+                    <groovy>
+                        <includes>
+                            <include>**/*.Jenkinsfile</include>
+                        </includes>
+                        <importOrder/>
+                    </groovy>
+                    <markdown>
+                        <includes>
+                            <include>**/*.md</include>
+                        </includes>
+                        <excludes>
+                            <exclude>**/target/**/*</exclude>
+                        </excludes>
+                    </markdown>
+                </configuration>
+            </plugin>
+        </plugins>
+        <defaultGoal>clean install</defaultGoal>
+    </build>
+
+    <profiles>
+        <!-- This profile is meant to create a feature bundle zip archive for upload to Titus.
+             The zip will contain all feature files for aps and the pom.xml
+
+             To run it issue: mvn -P pack-bundle-zip-aps
+             ZIP file will be located in the target folder
+        -->
+        <profile>
+            <id>pack-bundle-zip-aps</id>
+            <build>
+                <defaultGoal>clean initialize</defaultGoal>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <version>3.7.1</version>
+                        <executions>
+                            <execution>
+                                <configuration>
+                                    <appendAssemblyId>true</appendAssemblyId>
+                                    <descriptors>
+                                        <descriptor>src/main/assembly/zip-feature-bundle-aps.xml</descriptor>
+                                    </descriptors>
+                                </configuration>
+                                <id>zip-feature-bundle-aps</id>
+                                <phase>initialize</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <!-- This profile is meant to create a feature bundle zip archive for upload to Titus.
+             The zip will contain all feature files for vps and the pom.xml
+
+             To run it issue: mvn -P pack-bundle-zip-vps
+             ZIP file will be located in the target folder
+        -->
+        <profile>
+            <id>pack-bundle-zip-vps</id>
+            <build>
+                <defaultGoal>clean initialize</defaultGoal>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <version>3.7.1</version>
+                        <executions>
+                            <execution>
+                                <configuration>
+                                    <appendAssemblyId>true</appendAssemblyId>
+                                    <descriptors>
+                                        <descriptor>src/main/assembly/zip-feature-bundle-vps.xml</descriptor>
+                                    </descriptors>
+                                </configuration>
+                                <id>zip-feature-bundle-vps</id>
+                                <phase>initialize</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+</project>
