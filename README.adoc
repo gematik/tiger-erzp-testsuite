@@ -91,6 +91,16 @@ Beispiel, wenn das Primärsystem auf dem gleichen Rechner läuft, wie die Testsu
 Diese Einträge sollten nach der Durchführung der E-Rezept-Testsuite wieder entfernt werden, da es ansonsten zu einem unbeabsichtigten Fehlverhalten führt, wenn die E-Rezept-Testsuite nicht mehr aktiv läuft und somit die Nachrichten nicht mehr an den eRp Fachdienst weitergeleitet werden.
 ====
 
+=== Zugang zur RU prüfen
+Wichtig: Bitte prüfen Sie mit diesem curl Befehl, ob Sie von Ihrem lokalen Rechner Zugang zur RU haben:
+
+[source,bash]
+----
+curl -v https://erp-dev.zentral.erp.splitdns.ti-dienste.de/VAUCertificate
+----
+
+Sollten Sie keinen Zugang haben, wenden Sie sich bitte an Ihre IT.
+
 === Konnektor Konfiguration
 
 Alle Konnektoraufrufe müssen über den TigerProxy geroutet werden, damit der PTV6-Proxy den ECC Modus garantieren kann. Der Tiger-Proxy erwartet Konnektor Anfragen auf Port 11112. Die Adresse des echten Konnektors muss in der data.yaml konfiguriert sein. Weitere Einstellungsoptionen und mehr Details können auf der https://github.com/gematik/tiger-ptv6-proxy[zugehörigen GitHub Seite des PTV6-Proxy] eingesehen werden.
