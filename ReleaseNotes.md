@@ -1,5 +1,9 @@
 # Release Notes tiger-erzp-testsuite
 
+## Release 1.0.2
+- update erp-idp-client
+- new profile versions added 
+
 ## Release 1.0.1
 - fix forward-url of vau-encrypting-client
 
