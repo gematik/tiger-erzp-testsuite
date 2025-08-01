@@ -18,7 +18,7 @@ services:
 
   # IDP token service (internal precondition use only)
   idp-client-service:
-    image: gematik1/erp-idp-client:2.0.2
+    image: gematik1/erp-idp-client:2.0.3
 
   # VAU Request Encryption for practitioners (internal precondition use only)
   vau-encrypting-proxy:

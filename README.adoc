@@ -194,7 +194,6 @@ image::/doc/img/continue_dialog_testsuite_erp.png[Continue Dialog in Testsuite]
 | Tiger Testsuite (WorkflowUI) | 9010  | http
 | Tiger-Proxy Admin Port       | 9011  | http
 | Tiger-Proxy Proxy Port       | 443   | http / https
-| Tiger-Proxy Konnektor Port   | 11112 | http
 |=====================================================
 
 === Testreport
@@ -257,7 +256,7 @@ Copyright 2025 gematik GmbH
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 
-See the [LICENSE](./LICENSE) for the specific language governing permissions and limitations under the License.
+See the link:./LICENSE[LICENSE] for the specific language governing permissions and limitations under the License.
 
 == Additional Notes and Disclaimer from gematik GmbH
 
