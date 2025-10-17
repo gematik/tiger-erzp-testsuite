@@ -1,5 +1,9 @@
 # Release Notes tiger-erzp-testsuite
 
+## Release 1.0.3
+- update erp-vau-proxy-client, erp-vau-proxy-server
+- remove downloadDep.sh
+
 ## Release 1.0.2
 - update erp-idp-client
 - new profile versions added 

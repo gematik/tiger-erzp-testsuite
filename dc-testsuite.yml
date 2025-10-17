@@ -22,19 +22,19 @@ services:
 
   # VAU Request Encryption for practitioners (internal precondition use only)
   vau-encrypting-proxy:
-    image: gematik1/erp-vau-proxy-client:1.0.30
+    image: gematik1/erp-vau-proxy-client:1.0.32
     environment:
        - FORWARD_TARGET_URL=https://fd-dev.erezept-instanz1.titus.gematik.solutions
 
   # VAU Request Encryption for patients (internal precondition use only)
   vau-encrypting-proxy-versicherten:
-    image: gematik1/erp-vau-proxy-client:1.0.30
+    image: gematik1/erp-vau-proxy-client:1.0.32
     environment:
       - FORWARD_TARGET_URL=https://erp-dev.app.ti-dienste.de
 
   # VAU Server as part of vau translator (internal use only)
   vauServer:
-    image: gematik1/erp-vau-proxy-server:1.0.14
+    image: gematik1/erp-vau-proxy-server:1.0.16
     environment:
       - ENCRYPTION_SERVICE_URL=http://vauCryptoServer:8080
       - TARGET_URL=http://vau-encrypting-client:8080
@@ -45,7 +45,7 @@ services:
 
   # VAU Request Encryption as part of vau translator (internal use only)
   vau-encrypting-client:
-    image: gematik1/erp-vau-proxy-client:1.0.30
+    image: gematik1/erp-vau-proxy-client:1.0.32
     environment:
        - FORWARD_TARGET_URL=https://erp-dev.zentral.erp.splitdns.ti-dienste.de
 
