@@ -13,7 +13,7 @@ services:
     volumes:
       - ./tiger.yaml:/app/tiger.yaml:ro
       - ./data.yaml:/app/data.yaml:ro
-      - testsuite-maven:/home/ecctester/.m2/repository/:rw
+      - tiger-erzp-testsuite-maven:/home/ecctester/.m2/repository/:rw
       - ./report:/app/report:rw
 
   # IDP token service (internal precondition use only)
@@ -50,5 +50,5 @@ services:
        - FORWARD_TARGET_URL=https://erp-dev.zentral.erp.splitdns.ti-dienste.de
 
 volumes:
-  testsuite-maven:
-    name: testsuite-maven
+  tiger-erzp-testsuite-maven:
+    name: tiger-erzp-testsuite-maven

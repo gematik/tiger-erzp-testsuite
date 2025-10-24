@@ -43,6 +43,14 @@ public class ServiceGlue {
         TigerGlobalConfiguration.putValue(storeUnderName, currentDate.format(formatter));
     }
 
+    @Given("Store end date in {tigerResolvedString}")
+    @Given("Speichere das EndeDatum in {tigerResolvedString}")
+    public void store_end_date_in(String storeUnderName) {
+        LocalDate currentDate = LocalDate.now();
+        LocalDate nextMonth = currentDate.plusMonths(1);
+        TigerGlobalConfiguration.putValue(storeUnderName, nextMonth.format(formatter));
+    }
+
     @Given("As a doctor I want sign {tigerResolvedString} and store in variable {tigerResolvedString}")
     @Given("Als Arzt signiere ich {tigerResolvedString} und speichere es in der Variable in {tigerResolvedString}")   public void as_doctor_i_want_to_sign_something(String toBeSigned, String storeUnderName) throws Exception {
         var hbaBytes = getResourceBytes("Arzt_HBA_QES_E256.p12");
