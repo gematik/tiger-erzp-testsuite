@@ -1,5 +1,5 @@
 <Bundle xmlns="http://hl7.org/fhir">
-    <id value="0428d416-149e-48a4-977c-${erp.rnd_nr}" />
+    <id value="0428d416-149e-48a4-977c-${erp.rnd_nr}"/>
     <meta>
         <lastUpdated value="2025-10-01T15:29:00.434+00:00"/>
         <profile value="https://fhir.kbv.de/StructureDefinition/KBV_PR_ERP_Bundle|1.3"/>
@@ -111,8 +111,8 @@
                     </extension>
                     <extension url="Zeitraum">
                         <valuePeriod>
-                            <start value="2025-10-01"/>
-                            <end value="2025-10-31"/>
+                            <start value="${erp.current_date}"/>
+                            <end value="${erp.end_date}"/>
                         </valuePeriod>
                     </extension>
                     <extension url="ID">
@@ -147,7 +147,7 @@
                 <subject>
                     <reference value="Patient/9774f67f-a238-4daf-b4e6-Pat-GKV"/>
                 </subject>
-                <authoredOn value="${erp.current_date}" />
+                <authoredOn value="${erp.current_date}"/>
                 <requester>
                     <reference value="Practitioner/d8463daf-258e-4cad-a86a-6fd42fac161c"/>
                 </requester>
@@ -246,7 +246,7 @@
                         </coding>
                     </type>
                     <system value="http://fhir.de/sid/gkv/kvid-10"/>
-                    <value value="${erp.kvnr}" />
+                    <value value="${erp.kvnr}"/>
                 </identifier>
                 <name>
                     <use value="official"/>
