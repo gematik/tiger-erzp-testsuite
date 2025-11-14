@@ -33,12 +33,11 @@ tigerProxy:
       hosts: ["idp-ref.zentral.idp.splitdns.ti-dienste.de"]
     # route für eRp RU Fachdienst
     - from: /
-    #  to: https://10.31.195.10:443/
-      to: http://vauServer:8080
+      to: https://10.31.195.10:443/
       hosts: ["erp-ref.zentral.erp.splitdns.ti-dienste.de", "erp-ref.app.ti-dienste.de", "subscription-ref.zentral.erp.splitdns.ti-dienste.de"]
     # route für eRp RU-DEV Fachdienst
     - from: /
-      to: https://10.31.194.12:443/
+      to: http://vauServer:8080
       hosts: ["erp-dev.zentral.erp.splitdns.ti-dienste.de", "erp-dev.app.ti-dienste.de", "subscription-dev.zentral.erp.splitdns.ti-dienste.de"]
     - from: /
       to: http://${data.dockerservices.idp.address}

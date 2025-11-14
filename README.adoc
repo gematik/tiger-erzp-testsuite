@@ -44,7 +44,7 @@ image::/doc/img/setup.png[Setup]
 
 Der Tiger-Proxy unterstützt TLSv1.2 und gibt Server Zertifikate zurück, welche den Zertifikaten des Fachdienstes in der RU entspricht. Siehe folgende Datei:
 
-* `erp-ref.app.ti-dienste.de_NIST_X509.p12`
+* `erp-dev.app.ti-dienste.de_NIST_X509.p12`
 
 Zusätzlich wurden die unterstützten CipherSuiten wie folgt eingeschränkt:
 
@@ -58,7 +58,7 @@ Es muss das Routing der Nachrichten über den Tiger-Proxy der E-Rezept-Testsuite
 Beispiel für den HTTP-Header, damit der Tiger-Proxy korrekt routen kann.
 [source,httprequest]
 ----
-Host: erp-ref.zentral.erp.splitdns.ti-dienste.de
+Host: erp-dev.zentral.erp.splitdns.ti-dienste.de
 ----
 
 Es gibt keine Vorgabe WIE diese Umleitung erfolgen muss, zwei Wege scheinen jedoch sinnvoll:
@@ -70,8 +70,8 @@ Die Routen sind entsprechend konfiguriert, damit der Verkehr hier an den eRp Fac
 
 Hierbei sind folgende Punkte zu beachten:
 
-* Primärsystem seitig wird die E-Rezept-Testsuite als Proxy konfiguriert (e.g. `localhost:443`). Hiermit werden die Requests über die E-Rezept-Testsuite an den eRp Fachdienst gesendet. Ein Request an `https://erp-ref.zentral.erp.splitdns.ti-dienste.de/foobar`, via E-Rezept-Testsuite mit `localhost:443` entspricht somit `curl -x localhost:443 erp-ref.zentral.erp.splitdns.ti-dienste.de/foobar`)
-* Dabei ist darauf zu achten, dass der HTTP Header im (äußeren) HTTP Request dennoch den FQDN des Fachdienstes enthält (e.g `Host: erp-ref.zentral.erp.splitdns.ti-dienste.de`).
+* Primärsystem seitig wird die E-Rezept-Testsuite als Proxy konfiguriert (e.g. `localhost:443`). Hiermit werden die Requests über die E-Rezept-Testsuite an den eRp Fachdienst gesendet. Ein Request an `https://erp-dev.zentral.erp.splitdns.ti-dienste.de/foobar`, via E-Rezept-Testsuite mit `localhost:443` entspricht somit `curl -x localhost:443 erp-dev.zentral.erp.splitdns.ti-dienste.de/foobar`)
+* Dabei ist darauf zu achten, dass der HTTP Header im (äußeren) HTTP Request dennoch den FQDN des Fachdienstes enthält (e.g `Host: erp-dev.zentral.erp.splitdns.ti-dienste.de`).
 * Eine zusätzliche Manipulation der DNS Auflösung (Variante 2) in der `hosts` Datei ist nicht notwendig.
 
 === DNS Manipulation (Variante 2)
@@ -82,8 +82,8 @@ Beispiel, wenn das Primärsystem auf dem gleichen Rechner läuft, wie die Testsu
 
 [source,shell]
 ----
-127.0.0.1    erp-ref.zentral.erp.splitdns.ti-dienste.de
-127.0.0.1    erp-ref.app.ti-dienste.de
+127.0.0.1    erp-dev.zentral.erp.splitdns.ti-dienste.de
+127.0.0.1    erp-dev.app.ti-dienste.de
 ----
 
 [IMPORTANT]

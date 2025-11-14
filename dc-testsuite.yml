@@ -24,7 +24,7 @@ services:
   vau-encrypting-proxy:
     image: gematik1/erp-vau-proxy-client:1.0.32
     environment:
-       - FORWARD_TARGET_URL=https://fd-dev.erezept-instanz1.titus.gematik.solutions
+      - FORWARD_TARGET_URL=https://erp-dev.zentral.erp.splitdns.ti-dienste.de
 
   # VAU Request Encryption for patients (internal precondition use only)
   vau-encrypting-proxy-versicherten:

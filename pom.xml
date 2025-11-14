@@ -5,7 +5,7 @@
 
     <groupId>de.gematik</groupId>
     <artifactId>tiger-erzp-testsuite</artifactId>
-    <version>1.0.4</version>
+    <version>1.0.5</version>
 
     <distributionManagement>
         <repository>
@@ -21,15 +21,15 @@
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
-        <version.tiger>4.0.7</version.tiger>
+        <version.tiger>4.1.1</version.tiger>
         <spotless-maven-plugin.version>2.40.0</spotless-maven-plugin.version>
         <spotless.google-java-format.version>1.18.1</spotless.google-java-format.version>
         <version.junit.platform>1.11.4</version.junit.platform>
-        <version.bouncycastle>1.78.1</version.bouncycastle>
+        <version.bouncycastle>1.82</version.bouncycastle>
         <dss.version>5.13.1</dss.version>
         <!-- necessary to run with tiger 4.0.7 due to bug in 3.5.3 -->
-        <version.maven-surefire-plugin>3.5.2</version.maven-surefire-plugin>
-        <version.maven-failsafe-plugin>3.5.2</version.maven-failsafe-plugin>
+        <version.maven-surefire-plugin>3.5.4</version.maven-surefire-plugin>
+        <version.maven-failsafe-plugin>3.5.4</version.maven-failsafe-plugin>
     </properties>
 
     <dependencyManagement>
@@ -56,7 +56,7 @@
         <dependency>
             <groupId>de.gematik.test</groupId>
             <artifactId>tiger-zion</artifactId>
-            <version>${version.tiger}</version>
+            <version>4.1.0</version>
         </dependency>
         <dependency>
             <groupId>org.junit.platform</groupId>
