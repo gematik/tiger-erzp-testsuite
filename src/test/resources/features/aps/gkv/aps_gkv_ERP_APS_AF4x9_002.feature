@@ -46,15 +46,15 @@ Funktion: eRp abgebend - ERP_APS_AF4x9_002 - GF Gelesene Nachricht durch Abgeben
 
     Wenn TGR sende eine POST Anfrage an "${data.address_fachdienst}/Task/$create" mit folgenden mehrzeiligen Daten:
   """
-  <Parameters xmlns="http://hl7.org/fhir">
-    <parameter>
-      <name value="workflowType"/>
-      <valueCoding>
-        <system value="https://gematik.de/fhir/erp/CodeSystem/GEM_ERP_CS_FlowType"/>
-        <code value="200"/>
-      </valueCoding>
-    </parameter>
-  </Parameters>
+    <Parameters xmlns="http://hl7.org/fhir">
+      <parameter>
+        <name value="workflowType"/>
+        <valueCoding>
+          <system value="https://gematik.de/fhir/erp/CodeSystem/GEM_ERP_CS_FlowType"/>
+          <code value="160"/>
+        </valueCoding>
+      </parameter>
+    </Parameters>
   """
     Und TGR finde die letzte Anfrage mit dem Pfad "/Task/$create"
     Dann TGR prüfe aktuelle Antwort stimmt im Knoten "$.responseCode" überein mit "201"

@@ -112,7 +112,7 @@
                     <extension url="Zeitraum">
                         <valuePeriod>
                             <start value="${erp.current_date}"/>
-                            <end value="${erp.end_date}"/>
+                            <end value="2026-10-10"/>
                         </valuePeriod>
                     </extension>
                     <extension url="ID">
