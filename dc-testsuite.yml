@@ -25,7 +25,10 @@ services:
     image: gematik1/erp-vau-proxy-client:1.0.32
     environment:
       - FORWARD_TARGET_URL=https://erp-dev.zentral.erp.splitdns.ti-dienste.de
-
+    extra_hosts:
+      - ${VAU_TRANSLATION_CLIENT_ERP_DEV_HOST:-erp-dev.zentral.erp.splitdns.ti-dienste.de}:10.31.194.12
+      - ${VAU_TRANSLATION_CLIENT_ERP_REF_HOST:-erp-ref.zentral.erp.splitdns.ti-dienste.de}:10.31.195.10
+      
   # VAU Request Encryption for patients (internal precondition use only)
   vau-encrypting-proxy-versicherten:
     image: gematik1/erp-vau-proxy-client:1.0.32
@@ -54,4 +57,5 @@ services:
 
 volumes:
   tiger-erzp-testsuite-maven:
+
     name: tiger-erzp-testsuite-maven
