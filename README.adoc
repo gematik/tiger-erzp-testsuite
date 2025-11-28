@@ -147,8 +147,18 @@ Dazu müssen die folgenden Einträge angepasst werden:
 ```
 
 === Hinweise für APS Hersteller
-Es gibt 6 Tests (alle mit 4x6, 3x7 und 4x9 im Namen), welche Patienteninteraktion (Patient holt Medication, Patient sendet Zuweisung) erfordern.
+Es gibt 6 Tests (alle mit 4x6, 4x7, 4x9 im Namen), welche Patienteninteraktion (Patient holt Medication, Patient sendet Zuweisung) erfordern.
 Setzen Sie dafür Werte der Properties "user_agent", "x_api_key", "aps_telematik_id" in der data.yaml. Ansonsten werden die Tests fehlschlagen.
+Der "user_agent" besteht aus 4 zusammengesetzten Teilen
+
+* <Produktname>/<Produktversion> <Herstellername>/<client_id>
+
+mit:
+
+* <Produktname> gemäß eigener Definition, Länge 1-20 Zeichen, Zeichenvorrat [0-9a-zA-Z\-\.]
+* <Produktversion> gemäß Produktidentifikation in [gemSpec_OM]
+* <Herstellername> gemäß eigener Definition, Länge 1-20 Zeichen, Zeichenvorrat [0-9a-zA-Z\-\.]
+* <client_id> gemäß Registrierung bei der gematik
 
 == Testausführung
 

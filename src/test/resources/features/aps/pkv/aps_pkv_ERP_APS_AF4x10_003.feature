@@ -43,7 +43,7 @@ Funktion: eRp abgebend - ERP_APS_AF4x10_003 - GF PKV - Abrechnungsinfos ändern
         <name value="workflowType"/>
         <valueCoding>
           <system value="https://gematik.de/fhir/erp/CodeSystem/GEM_ERP_CS_FlowType"/>
-          <code value="160"/>
+          <code value="200"/>
         </valueCoding>
       </parameter>
     </Parameters>
@@ -61,7 +61,8 @@ Funktion: eRp abgebend - ERP_APS_AF4x10_003 - GF PKV - Abrechnungsinfos ändern
     Gegeben sei TGR setze globale Variable "erp.rnd_nr" auf "!{randomHex(12)}"
     Und Als Patient speichere ich meine KVNR in der Variable "erp.kvnr"
     Und Speichere das aktuelle Datum in "erp.current_date"
-    Dann Als Arzt signiere ich "!{resolve(file('src/test/resources/Bundle_Arzt.xml'))}" und speichere es in der Variable in "erp.signed_document"
+    Und Speichere das EndeDatum in "erp.end_date"
+    Dann Als Arzt signiere ich "!{resolve(file('src/test/resources/Bundle_Arzt_PKV.xml'))}" und speichere es in der Variable in "erp.signed_document"
 
   @APS
   Szenario: Vorbedingung: Als Arzt das E-Rezept einstellen
@@ -102,7 +103,7 @@ Funktion: eRp abgebend - ERP_APS_AF4x10_003 - GF PKV - Abrechnungsinfos ändern
 
     Und TGR setze globale Variable "erp.binary_data_value" auf "!{base64Decode(getValue('erp.signed_document'))}"
     Und TGR setze globale Variable "erp.aps_medication" auf "!{'<Medication>' + subStringBefore(subStringAfter(getValue('erp.binary_data_value'), '<Medication>') , '</Medication>') + '</Medication>'}"
-    Und TGR setze globale Variable "erp.aps_medication_id" auf "!{subStringBefore(subStringAfter(getValue('erp.aps_medication'), '<id value=\"'), '\"')}"
+    Und TGR setze globale Variable "erp.aps_medication_id" auf "!{subStringBefore(subStringAfter(getValue('erp.aps_medication'), '<id value='), '')}"
 
   @APS
   Szenario: Vorbedingung: Als Apotheker die E-Rezept-Abgabe vollziehen

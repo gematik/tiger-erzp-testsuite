@@ -67,6 +67,7 @@ Funktion: eRp abgebend - ERP_APS_AF4x8_001 - GF E-Rezept Quittung erneut abrufen
     Gegeben sei TGR setze globale Variable "erp.rnd_nr" auf "!{randomHex(12)}"
     Und Als Patient speichere ich meine KVNR in der Variable "erp.kvnr"
     Und Speichere das aktuelle Datum in "erp.current_date"
+    Und Speichere das EndeDatum in "erp.end_date"
     Dann Als Arzt signiere ich "!{resolve(file('src/test/resources/Bundle_Arzt.xml'))}" und speichere es in der Variable in "erp.signed_document"
 
   @APS

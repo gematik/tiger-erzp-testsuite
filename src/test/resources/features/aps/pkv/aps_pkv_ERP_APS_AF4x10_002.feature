@@ -43,7 +43,7 @@ Funktion: eRp abgebend - ERP_APS_AF4x10_002 - GF PKV - eine spezifische Abrechnu
         <name value="workflowType"/>
         <valueCoding>
           <system value="https://gematik.de/fhir/erp/CodeSystem/GEM_ERP_CS_FlowType"/>
-          <code value="160"/>
+          <code value="200"/>
         </valueCoding>
       </parameter>
     </Parameters>
@@ -61,7 +61,8 @@ Funktion: eRp abgebend - ERP_APS_AF4x10_002 - GF PKV - eine spezifische Abrechnu
     Gegeben sei TGR setze globale Variable "erp.rnd_nr" auf "!{randomHex(12)}"
     Und Als Patient speichere ich meine KVNR in der Variable "erp.kvnr"
     Und Speichere das aktuelle Datum in "erp.current_date"
-    Dann Als Arzt signiere ich "!{resolve(file('src/test/resources/Bundle_Arzt.xml'))}" und speichere es in der Variable in "erp.signed_document"
+    Und Speichere das EndeDatum in "erp.end_date"
+    Dann Als Arzt signiere ich "!{resolve(file('src/test/resources/Bundle_Arzt_PKV.xml'))}" und speichere es in der Variable in "erp.signed_document"
 
   @APS
   Szenario: Vorbedingung: Als Arzt das E-Rezept einstellen
