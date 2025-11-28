@@ -11,9 +11,6 @@
 @APS
 Funktion: eRp abgebend - ERP_APS_AF4x6_022 - GF Nachricht empfangen (ungelesen)
 
-  Grundlage:
-    Gegeben sei TGR lösche alle default headers
-
   @APS
   Szenario: Vorbedingung: lösche alte Nachrichten
     Gegeben sei TGR lösche aufgezeichnete Nachrichten
@@ -57,11 +54,16 @@ Funktion: eRp abgebend - ERP_APS_AF4x6_022 - GF Nachricht empfangen (ungelesen)
     Dann TGR prüfe aktuelle Antwort stimmt im Knoten "$.responseCode" überein mit "201"
     Und TGR prüfe aktuelle Antwort stimmt im Knoten "$.body" nicht überein mit "^Error:.*"
 
+    Und TGR speichere Wert des Knotens "$.body.Task.id.value" der aktuellen Antwort in der Variable "erp.task_id"
+    Und TGR speichere Wert des Knotens "$.body.Task.identifier[?(lowerCase(@.system.value.basicPath) =$ 'accesscode')].value.value" der aktuellen Antwort in der Variable "erp.task_access_code"
+    Und TGR speichere Wert des Knotens "$.body.Task.identifier[?(lowerCase(@.system.value.basicPath) =$ 'prescriptionid')].value.value" der aktuellen Antwort in der Variable "erp.task_prescription_id"
+
   @APS
   Szenario: Vorbedingung: als Arzt das KBV Bundle signieren
     Gegeben sei TGR setze globale Variable "erp.rnd_nr" auf "!{randomHex(12)}"
     Und Als Patient speichere ich meine KVNR in der Variable "erp.kvnr"
     Und Speichere das aktuelle Datum in "erp.current_date"
+    Und Speichere das EndeDatum in "erp.end_date"
     Dann Als Arzt signiere ich "!{resolve(file('src/test/resources/Bundle_Arzt.xml'))}" und speichere es in der Variable in "erp.signed_document"
 
   @APS
@@ -134,44 +136,44 @@ Funktion: eRp abgebend - ERP_APS_AF4x6_022 - GF Nachricht empfangen (ungelesen)
 
     Wenn TGR sende eine POST Anfrage an "${data.address_fachdienst_fdv}/Communication" mit folgenden mehrzeiligen Daten:
   """
-  {
-    "resourceType": "Communication",
-    "id": "erp-communication-05-request-RezeptZuweisen",
-    "meta": {
-      "profile": [
-        "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_PR_Communication_DispReq|1.5"
-      ]
-    },
-    "status": "unknown",
-    "extension": [
-      {
-        "url": "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_EX_PrescriptionType",
-        "valueCoding": {
-          "code": "160",
-          "system": "https://gematik.de/fhir/erp/CodeSystem/GEM_ERP_CS_FlowType",
-          "display": "Muster 16 (Apothekenpflichtige Arzneimittel)"
-        }
-      }
-    ],
-    "recipient": [
-      {
-        "identifier": {
-          "system": "https://gematik.de/fhir/sid/telematik-id",
-          "value": "${data.aps_telematik_id}"
-        }
-      }
-    ],
-    "basedOn": [
-      {
-        "reference": "Task/${erp.task_id}/$accept?ac=${erp.task_access_code}"
-      }
-    ],
-    "payload": [
-      {
-        "contentString": "{ \"version\": 1, \"supplyOptionsType\": \"onPremise\", \"name\": \"Dr. Maximilian von Muster\", \"address\": [ \"wohnhaft bei Emilia Fischer\", \"Bundesallee 312\", \"123. OG\", \"12345 Berlin\" ], \"phone\": \"004916094858168\" }"
-      }
-    ]
-  }
+    {
+     "resourceType": "Communication",
+     "id": "erp-communication-05-request-RezeptZuweisen",
+     "meta": {
+       "profile": [
+         "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_PR_Communication_DispReq|1.4"
+       ]
+     },
+     "status": "unknown",
+     "extension": [
+       {
+         "url": "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_EX_PrescriptionType",
+         "valueCoding": {
+           "code": "160",
+           "system": "https://gematik.de/fhir/erp/CodeSystem/GEM_ERP_CS_FlowType",
+           "display": "Muster 16 (Apothekenpflichtige Arzneimittel)"
+         }
+       }
+     ],
+     "recipient": [
+       {
+         "identifier": {
+           "system": "https://gematik.de/fhir/sid/telematik-id",
+           "value": "${data.aps_telematik_id}"
+         }
+       }
+     ],
+     "basedOn": [
+       {
+         "reference": "Task/${erp.task_id}/$accept?ac=${erp.task_access_code}"
+       }
+     ],
+     "payload": [
+       {
+         "contentString": "{ \"version\": 1, \"supplyOptionsType\": \"onPremise\", \"name\": \"Dr. Maximilian von Muster\", \"address\": [ \"wohnhaft bei Emilia Fischer\", \"Bundesallee 312\", \"123. OG\", \"12345 Berlin\" ], \"phone\": \"004916094858168\" }"
+       }
+     ]
+    }
   """
     Und TGR finde die letzte Anfrage mit dem Pfad "/Communication"
     Dann TGR prüfe aktuelle Antwort stimmt im Knoten "$.responseCode" überein mit "201"
