@@ -1,5 +1,9 @@
 # Release Notes tiger-erzp-testsuite
 
+## Release 1.0.11
+- diga moved from kob to this project
+- titus/konsim removed
+
 ## Release 1.0.8
 - removed "127.0.0.1    erp-dev.app.ti-dienste.de" from readme.adoc from etc/hosts file
 - add extra_hosts to vau-encrypting-proxy and vau-encrypting-client
