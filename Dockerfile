@@ -40,12 +40,12 @@ WORKDIR /app
 
 RUN mkdir -p /app/report
 
-RUN /usr/sbin/adduser -D ecctester
-RUN chown -R ecctester /app
+RUN /usr/sbin/adduser -D rzpttester
+RUN chown -R rzpttester /app
 
-USER ecctester
+USER rzpttester
 
-RUN mkdir -p /home/ecctester/.m2/repository
+RUN mkdir -p /home/rzpttester/.m2/repository
 
 # Command to be executed.
 ENTRYPOINT ["bash", "-c", "rm -rf /app/report/* ; mvn clean verify || true ; mv -v /app/target/*report.zip /app/report/"]
