@@ -21,7 +21,7 @@ endif::[]
 
 == Einführung
 
-Die E-Rezept-Testsuite unterstützt Primärsysteme bei der Konformitätsbestätigung der gematik für DiGA (dem Bestätigungsverfahren zur Verordnung von elektronischen Verordnungen Digitaler Gesundheitsanwendungen), sowie auch für das eRp4VPS (dem Bestätigungsverfahren zur Verordnung elektronischer Rezepte). Des Weiteren sind geplant auch für das eRp4VPS eT-Rezept & eBTM (dem  Bestätigungsverfahren zur Verordnung elektronischer Sonderrezepte für Betäubungsmittel oder besonderer Wirkstoffe, wie Lenalidomid, Pomalidomid und Thalidomid zur Verfügung zu stellen (noch nicht umgesetzt). Dazu müssen UseCases aus dem Bereich eRezept ausgeführt werden. Zusätzlich gibt es für APS Hersteller UseCases (bspw. Rezeptzuweisung), die mit dieser Testsuite getestet werden können.
+Die E-Rezept-Testsuite unterstützt Primärsysteme bei der Konformitätsbestätigung der gematik für DiGA (dem Bestätigungsverfahren zur Verordnung von elektronischen Verordnungen Digitaler Gesundheitsanwendungen), sowie auch für das eRp4VPS (dem Bestätigungsverfahren zur Verordnung elektronischer Rezepte). Des Weiteren sind geplant auch für das eRp4VPS eT-Rezept & eBTM (dem  Bestätigungsverfahren zur Verordnung elektronischer Sonderrezepte für Betäubungsmittel oder besonderer Wirkstoffe, wie Lenalidomid, Pomalidomid und Thalidomid zur Verfügung zu stellen. Dazu müssen UseCases aus dem Bereich eRezept ausgeführt werden. Zusätzlich gibt es für APS Hersteller UseCases (bspw. Rezeptzuweisung), die mit dieser Testsuite getestet werden können.
 
 == Setup
 
@@ -152,7 +152,7 @@ Setzen Sie dafür Werte der Properties "user_agent", "x_api_key", "aps_telematik
 == Testausführung
 
 Die E-Rezept-Testsuite kann nur in einem Docker-Container ausgeführt werden.
-Per Default starten die VPS Testfälle. Um die Testfälle für AVS zu starten kann die .env Datei entsprechend bearbeitet werden.
+Per Default starten die VPS Testfälle. Um die Testfälle für AVS, DIGA oder T-Rezepte zu starten kann die .env Datei entsprechend bearbeitet werden.
 
 === Lokal (Docker)
 
