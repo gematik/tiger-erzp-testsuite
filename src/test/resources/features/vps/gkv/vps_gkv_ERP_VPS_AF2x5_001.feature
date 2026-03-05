@@ -22,6 +22,7 @@ Funktion: eRp verordnend - ERP_VPS_AF2x5_001 - GF E-Rezept durch Verordnenden l�
     Und TGR finde die letzte Anfrage mit Pfad ".*" und Knoten "$.body.message.path.basicPath" der mit "/Task/$create" 체bereinstimmt
     Dann TGR pr체fe aktuelle Antwort stimmt im Knoten "$.body.message.responseCode" 체berein mit "201"
     Und TGR pr체fe aktuelle Antwort stimmt im Knoten "$.body.message.body" nicht 체berein mit "^Error:.*"
+    Dann TGR pr체fe aktuelle Antwort stimmt im Knoten "$.body.message.body.Task.extension.valueCoding.code.value" 체berein mit "160"
     Und TGR speichere Wert des Knotens "$.body.message.body.Task.id.value" der aktuellen Antwort in der Variable "erp.task_id"
 
   @VPS

@@ -1,24 +1,23 @@
 # language: de
 
 #Test für APS
-#Testfall prüft das Empfangen von Nachrichten mit Filter. Zu erfüllende Vorbedingungen:
+#Testfall prüft das Empfangen von Nachrichten. Zu erfüllende Vorbedingungen:
 #   1) AuthN-Token anfordern für VPS,
-#   2) E-Rezept erzeugen,
-#   3) E-Rezept einstellen,
+#   2) T-Rezept erzeugen,
+#   3) T-Rezept einstellen,
 #   4) Nachricht durch Patient einstellen,
 #   5) AuthN-Token anfordern für APS
-
-@APS_AF4x6_021
-@APS
-Funktion: eRp abgebend - ERP_APS_AF4x6_021 - GF Nachricht empfangen (Datumfilter)
+@APS_T-REZEPT_NACHRICHT_EMPFANGEN
+@APS_T-REZEPT
+Funktion: eRp abgebend - GF Nachricht empfangen (Token)
   Grundlage:
     Gegeben sei TGR lösche alle default headers
 
-  @APS
+  @APS_T-REZEPT
   Szenario: Vorbedingung: lösche alte Nachrichten
     Gegeben sei TGR lösche aufgezeichnete Nachrichten
 
-  @APS
+  @APS_T-REZEPT
   Szenario: Vorbedingung: Als Arztpraxis ein IDP Access Token abholen
     Gegeben sei TGR setze den default header "X-p12-bytes-base64" auf den Wert "!{resolve(file('src/test/resources/Arztpraxis_SMCB_AUT_E256_X509.p12.base64'))}"
     Und TGR setze den default header "X-keystore-password" auf den Wert "00"
@@ -31,7 +30,7 @@ Funktion: eRp abgebend - ERP_APS_AF4x6_021 - GF Nachricht empfangen (Datumfilter
     Dann TGR prüfe aktuelle Antwort stimmt im Knoten "$.responseCode" überein mit "200"
     Und TGR speichere Wert des Knotens "$.body" der aktuellen Antwort in der Variable "erp.access_token_arztpraxis"
 
-  @APS
+  @APS_T-REZEPT
   Szenario: Vorbedingung: Als Arzt ein E-Rezept erstellen
     Und TGR setze folgende default headers:
   """
@@ -48,7 +47,7 @@ Funktion: eRp abgebend - ERP_APS_AF4x6_021 - GF Nachricht empfangen (Datumfilter
         <name value="workflowType"/>
         <valueCoding>
           <system value="https://gematik.de/fhir/erp/CodeSystem/GEM_ERP_CS_FlowType"/>
-          <code value="160"/>
+          <code value="166"/>
         </valueCoding>
       </parameter>
     </Parameters>
@@ -56,20 +55,21 @@ Funktion: eRp abgebend - ERP_APS_AF4x6_021 - GF Nachricht empfangen (Datumfilter
     Und TGR finde die letzte Anfrage mit dem Pfad "/Task/$create"
     Dann TGR prüfe aktuelle Antwort stimmt im Knoten "$.responseCode" überein mit "201"
     Und TGR prüfe aktuelle Antwort stimmt im Knoten "$.body" nicht überein mit "^Error:.*"
+    Dann TGR prüfe aktuelle Antwort stimmt im Knoten "$.body.Task.extension.valueCoding.code.value" überein mit "166"
 
     Und TGR speichere Wert des Knotens "$.body.Task.id.value" der aktuellen Antwort in der Variable "erp.task_id"
     Und TGR speichere Wert des Knotens "$.body.Task.identifier[?(lowerCase(@.system.value.basicPath) =$ 'accesscode')].value.value" der aktuellen Antwort in der Variable "erp.task_access_code"
     Und TGR speichere Wert des Knotens "$.body.Task.identifier[?(lowerCase(@.system.value.basicPath) =$ 'prescriptionid')].value.value" der aktuellen Antwort in der Variable "erp.task_prescription_id"
 
-  @APS
+  @APS_T-REZEPT
   Szenario: Vorbedingung: als Arzt das KBV Bundle signieren
     Gegeben sei TGR setze globale Variable "erp.rnd_nr" auf "!{randomHex(12)}"
     Und Als Patient speichere ich meine KVNR in der Variable "erp.kvnr"
     Und Speichere das aktuelle Datum in "erp.current_date"
     Und Speichere das EndeDatum in "erp.end_date"
-    Dann Als Arzt signiere ich "!{resolve(file('src/test/resources/Bundle_Arzt.xml'))}" und speichere es in der Variable in "erp.signed_document"
+    Dann Als Arzt signiere ich "!{resolve(file('src/test/resources/Bundle_Arzt_T-Rezept.xml'))}" und speichere es in der Variable in "erp.signed_document"
 
-  @APS
+  @APS_T-REZEPT
   Szenario: Vorbedingung: Als Arzt das E-Rezept einstellen
     Und TGR setze folgende default headers:
   """
@@ -97,7 +97,7 @@ Funktion: eRp abgebend - ERP_APS_AF4x6_021 - GF Nachricht empfangen (Datumfilter
     Dann TGR prüfe aktuelle Antwort stimmt im Knoten "$.responseCode" überein mit "200"
     Und TGR prüfe aktuelle Antwort stimmt im Knoten "$.body" nicht überein mit "^Error:.*"
 
-  @APS
+  @APS_T-REZEPT
   Szenario: Vorbedingung: Als Patient ein IDP Access Token abholen
     Gegeben sei TGR setze den default header "X-p12-bytes-base64" auf den Wert "!{resolve(file('src/test/resources/Patient_AUT_E256.p12.base64'))}"
     Und TGR setze den default header "X-keystore-password" auf den Wert "00"
@@ -152,7 +152,7 @@ Funktion: eRp abgebend - ERP_APS_AF4x6_021 - GF Nachricht empfangen (Datumfilter
       {
         "url": "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_EX_PrescriptionType",
         "valueCoding": {
-          "code": "160",
+          "code": "166",
           "system": "https://gematik.de/fhir/erp/CodeSystem/GEM_ERP_CS_FlowType",
           "display": "Muster 16 (Apothekenpflichtige Arzneimittel)"
         }
@@ -182,9 +182,11 @@ Funktion: eRp abgebend - ERP_APS_AF4x6_021 - GF Nachricht empfangen (Datumfilter
     Dann TGR prüfe aktuelle Antwort stimmt im Knoten "$.responseCode" überein mit "201"
     Und TGR prüfe aktuelle Antwort stimmt im Knoten "$.body" nicht überein mit "^Error:.*"
 
+
   @APS
-  Szenario: Nachricht empfangen (mit Datumfilter)
-    Gegeben sei TGR pausiere Testausführung mit Nachricht "Bitte rufen Sie die empfangenen Nachrichten mit einem Datumsfilter ab."
+  Szenario: Token empfangen
+    Gegeben sei TGR pausiere Testausführung mit Nachricht "Bitte rufen Sie alle empfangenen Nachrichten ab und akzeptieren Sie das letzte E-T-Rezept von der KVNR: ${erp.patient_kvnr}."
     Und TGR finde die letzte Anfrage mit Pfad ".*" und Knoten "$.body.message.path.basicPath" der mit "/Communication" übereinstimmt
     Dann TGR prüfe aktuelle Antwort stimmt im Knoten "$.body.message.responseCode" überein mit "200"
-
+    Und TGR finde die letzte Anfrage mit Pfad ".*" und Knoten "$.body.message.path.basicPath" der mit "/Task/${erp.task_id}/$accept" übereinstimmt
+    Dann TGR prüfe aktuelle Antwort stimmt im Knoten "$.body.message.responseCode" überein mit "200"

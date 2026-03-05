@@ -1,5 +1,10 @@
 # Release Notes tiger-erzp-testsuite
 
+## Release 1.1.0
+- t-rezepts added for VPS and AVS
+- update tiger version
+- GEM_ERP_PR_Communication_DispReq profile increased
+
 ## Release 1.0.11
 - diga moved from kob to this project
 - titus/konsim removed
