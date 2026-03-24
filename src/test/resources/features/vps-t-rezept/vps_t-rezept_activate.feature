@@ -17,6 +17,7 @@ Funktion: eRp verordnend - GF T-Rezept einstellen
     Gegeben sei TGR lösche aufgezeichnete Nachrichten
 
   @VPS-T-REZEPT
+  @Mandatory
   Szenario: Vorbedingung: T-Rezept erzeugen
     Gegeben sei TGR pausiere Testausführung mit Nachricht "Bitte erzeugen Sie mit dem Primärsystem (PS) ein T-Rezept mit einem Verordnungsdatensatz."
     Und TGR finde die letzte Anfrage mit Pfad ".*" und Knoten "$.body.message.path.basicPath" der mit "/Task/$create" übereinstimmt
@@ -26,6 +27,7 @@ Funktion: eRp verordnend - GF T-Rezept einstellen
     Und TGR speichere Wert des Knotens "$.body.message.body.Task.id.value" der aktuellen Antwort in der Variable "erp.task_id"
 
   @VPS-T-REZEPT
+  @Mandatory
   Szenario: Test: T-Rezept einstellen
     Gegeben sei TGR pausiere Testausführung mit Nachricht "Bitte stellen Sie das bereits erzeugte T-Rezept ein."
     Und TGR finde die letzte Anfrage mit Pfad ".*" und Knoten "$.body.message.path.basicPath" der mit "/Task/${erp.task_id}/$activate" übereinstimmt

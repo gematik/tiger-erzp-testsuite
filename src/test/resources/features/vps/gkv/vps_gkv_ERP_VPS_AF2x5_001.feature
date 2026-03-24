@@ -17,6 +17,7 @@ Funktion: eRp verordnend - ERP_VPS_AF2x5_001 - GF E-Rezept durch Verordnenden l�
     Gegeben sei TGR lösche aufgezeichnete Nachrichten
 
   @VPS
+  @Mandatory
   Szenario: Vorbedingung: E-Rezept erzeugen
     Gegeben sei TGR pausiere Testausführung mit Nachricht "Bitte erzeugen Sie mit dem Primärsystem (PS) ein E-Rezept mit einem Verordnungsdatensatz."
     Und TGR finde die letzte Anfrage mit Pfad ".*" und Knoten "$.body.message.path.basicPath" der mit "/Task/$create" übereinstimmt
@@ -26,6 +27,7 @@ Funktion: eRp verordnend - ERP_VPS_AF2x5_001 - GF E-Rezept durch Verordnenden l�
     Und TGR speichere Wert des Knotens "$.body.message.body.Task.id.value" der aktuellen Antwort in der Variable "erp.task_id"
 
   @VPS
+  @Mandatory
   Szenario: Vorbedingung: E-Rezept einstellen
     Gegeben sei TGR pausiere Testausführung mit Nachricht "Bitte stellen Sie das bereits erzeugte E-Rezept ein."
     Und TGR finde die letzte Anfrage mit Pfad ".*" und Knoten "$.body.message.path.basicPath" der mit "/Task/${erp.task_id}/$activate" übereinstimmt
@@ -34,6 +36,7 @@ Funktion: eRp verordnend - ERP_VPS_AF2x5_001 - GF E-Rezept durch Verordnenden l�
     Und TGR prüfe aktueller Request enthält Knoten "$.body.message.body.Parameters.parameter.resource.Binary.data.value.[?(@..name == 'ocspBasic')]"
 
   @VPS
+  @Mandatory
   Szenario: Test: E-Rezept löschen
     Gegeben sei TGR pausiere Testausführung mit Nachricht "Bitte löschen Sie das vorher erzeugte E-Rezept."
     Und TGR finde die letzte Anfrage mit Pfad ".*" und Knoten "$.body.message.path.basicPath" der mit "/Task/${erp.task_id}/$abort" übereinstimmt

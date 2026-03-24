@@ -14,6 +14,7 @@ Funktion: eRp verordnend - ERP_VPS_AF200x1_001 - GF PKV E-Rezept erzeugen (WF 20
     Gegeben sei TGR lösche aufgezeichnete Nachrichten
 
   @VPS
+  @Mandatory
   Szenario: Vorbedingung: PKV E-Rezept erzeugen
     Gegeben sei TGR pausiere Testausführung mit Nachricht "Bitte erzeugen Sie mit dem Primärsystem (PS) ein PKV E-Rezept."
     Und TGR finde die letzte Anfrage mit Pfad ".*" und Knoten "$.body.message.path.basicPath" der mit "/Task/$create" übereinstimmt
@@ -23,6 +24,7 @@ Funktion: eRp verordnend - ERP_VPS_AF200x1_001 - GF PKV E-Rezept erzeugen (WF 20
     Und TGR speichere Wert des Knotens "$.body.message.body.Task.id.value" der aktuellen Antwort in der Variable "erp.task_id"
 
   @VPS
+  @Mandatory
   Szenario: Test: PKV E-Rezept einstellen
     Gegeben sei TGR pausiere Testausführung mit Nachricht "Bitte stellen Sie das bereits erzeugte E-Rezept ein."
     Und TGR finde die letzte Anfrage mit Pfad ".*" und Knoten "$.body.message.path.basicPath" der mit "/Task/${erp.task_id}/$activate" übereinstimmt
