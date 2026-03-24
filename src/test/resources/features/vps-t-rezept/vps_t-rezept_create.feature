@@ -12,6 +12,7 @@ Funktion: eRp verordnend - GF E-T-Rezept erzeugen (ein Verordnungsdatensatz)
     Gegeben sei TGR lösche alle default headers
 
   @VPS-T-REZEPT
+  @Mandatory
   Szenario: Test: T-Rezept erzeugen
     Gegeben sei TGR pausiere Testausführung mit Nachricht "Bitte erzeugen Sie mit dem Primärsystem (PS) ein T-Rezept mit einem Verordnungsdatensatz."
     Und TGR finde die letzte Anfrage mit Pfad ".*" und Knoten "$.body.message.path.basicPath" der mit "/Task/$create" übereinstimmt

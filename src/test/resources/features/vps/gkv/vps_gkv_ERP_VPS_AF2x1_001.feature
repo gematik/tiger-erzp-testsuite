@@ -12,6 +12,7 @@ Funktion: eRp verordnend - ERP_VPS_AF2x1_001 - GF E-Rezept erzeugen (ein Verordn
     Gegeben sei TGR lösche alle default headers
 
   @VPS
+  @Mandatory
   Szenario: Test: E-Rezept erzeugen
     Gegeben sei TGR pausiere Testausführung mit Nachricht "Bitte erzeugen Sie mit dem Primärsystem (PS) ein E-Rezept mit einem Verordnungsdatensatz."
     Und TGR finde die letzte Anfrage mit Pfad ".*" und Knoten "$.body.message.path.basicPath" der mit "/Task/$create" übereinstimmt

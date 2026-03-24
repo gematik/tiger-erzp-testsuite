@@ -14,6 +14,7 @@ Funktion: eRp verordnend - ERP_VPS_AF169x1_001 - Direktzuweisung Rezept einstell
     Gegeben sei TGR lösche aufgezeichnete Nachrichten
 
   @VPS
+  @Mandatory
   Szenario: Test: Direktzuweisung E-Rezept erzeugen
     Gegeben sei TGR pausiere Testausführung mit Nachricht "Bitte erzeugen Sie mit dem Primärsystem (PS) eine Rezept im Workflow 169."
     Und TGR finde die letzte Anfrage mit Pfad ".*" und Knoten "$.body.message.path.basicPath" der mit "/Task/$create" übereinstimmt
@@ -23,6 +24,7 @@ Funktion: eRp verordnend - ERP_VPS_AF169x1_001 - Direktzuweisung Rezept einstell
     Und TGR speichere Wert des Knotens "$.body.message.body.Task.id.value" der aktuellen Antwort in der Variable "erp.task_id"
 
   @VPS
+  @Mandatory
   Szenario: Test: Direktzuweisung E-Rezept einstellen
     Gegeben sei TGR pausiere Testausführung mit Nachricht "Bitte stellen Sie das bereits erzeugte E-Rezept ein."
     Und TGR finde die letzte Anfrage mit Pfad ".*" und Knoten "$.body.message.path.basicPath" der mit "/Task/${erp.task_id}/$activate" übereinstimmt

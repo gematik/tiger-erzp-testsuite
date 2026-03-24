@@ -5,7 +5,7 @@
 
     <groupId>de.gematik</groupId>
     <artifactId>tiger-erzp-testsuite</artifactId>
-    <version>1.1.1</version>
+    <version>1.1.2</version>
 
     <distributionManagement>
         <repository>
@@ -331,6 +331,74 @@
                                     </descriptors>
                                 </configuration>
                                 <id>zip-feature-bundle-vps</id>
+                                <phase>initialize</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <!-- This profile is meant to create a feature bundle zip archive for upload to Titus.
+             The zip will contain all feature files for diga and the pom.xml
+
+             To run it issue: mvn -P pack-bundle-zip-diga
+             ZIP file will be located in the target folder
+        -->
+        <profile>
+            <id>pack-bundle-zip-diga</id>
+            <build>
+                <defaultGoal>clean initialize</defaultGoal>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <version>3.7.1</version>
+                        <executions>
+                            <execution>
+                                <configuration>
+                                    <appendAssemblyId>true</appendAssemblyId>
+                                    <descriptors>
+                                        <descriptor>src/main/assembly/zip-feature-bundle-diga.xml</descriptor>
+                                    </descriptors>
+                                </configuration>
+                                <id>zip-feature-bundle-diga</id>
+                                <phase>initialize</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <!-- This profile is meant to create a feature bundle zip archive for upload to Titus.
+              The zip will contain all feature files for diga and the pom.xml
+
+              To run it issue: mvn -P pack-bundle-zip-diga
+              ZIP file will be located in the target folder
+         -->
+        <profile>
+            <id>pack-bundle-zip-t-rezept</id>
+            <build>
+                <defaultGoal>clean initialize</defaultGoal>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <version>3.7.1</version>
+                        <executions>
+                            <execution>
+                                <configuration>
+                                    <appendAssemblyId>true</appendAssemblyId>
+                                    <descriptors>
+                                        <descriptor>src/main/assembly/zip-feature-bundle-t-rezept.xml</descriptor>
+                                    </descriptors>
+                                </configuration>
+                                <id>zip-feature-bundle-t-rezept</id>
                                 <phase>initialize</phase>
                                 <goals>
                                     <goal>single</goal>

@@ -14,6 +14,7 @@ Funktion: eRp verordnend - ERP_VPS_AF_MVO_001 - GF MVO E-Rezept erzeugen
     Gegeben sei TGR lösche aufgezeichnete Nachrichten
 
   @VPS
+  @Mandatory
   Szenario: Vorbedingung: MVO E-Rezept erzeugen
     Gegeben sei TGR pausiere Testausführung mit Nachricht "Bitte erzeugen Sie mit dem Primärsystem (PS) ein MVO E-Rezept."
     Und TGR finde die letzte Anfrage mit Pfad ".*" und Knoten "$.body.message.path.basicPath" der mit "/Task/$create" übereinstimmt
@@ -23,6 +24,7 @@ Funktion: eRp verordnend - ERP_VPS_AF_MVO_001 - GF MVO E-Rezept erzeugen
     Und TGR speichere Wert des Knotens "$.body.message.body.Task.id.value" der aktuellen Antwort in der Variable "erp.task_id"
 
   @VPS
+  @Mandatory
   Szenario: Test: MVO E-Rezept einstellen
     Gegeben sei TGR pausiere Testausführung mit Nachricht "Bitte stellen Sie das bereits erzeugte E-Rezept ein."
     Und TGR finde die letzte Anfrage mit Pfad ".*" und Knoten "$.body.message.path.basicPath" der mit "/Task/${erp.task_id}/$activate" übereinstimmt
