@@ -1,5 +1,8 @@
 # Release Notes tiger-erzp-testsuite
 
+## Release 1.1.3
+- algorithmVersion in Arzt bundle for t-rezept to 1.0.1 increased 
+
 ## Release 1.1.0
 - t-rezepts added for VPS and AVS
 - update tiger version
