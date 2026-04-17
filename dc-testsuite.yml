@@ -4,7 +4,7 @@ services:
       context: .
     container_name: tiger-erzpt-testsuite
     environment:
-      - MAVEN_OPTS=-Dcucumber.filter.tags=${TESTSUITE_TESTS}
+       - CUCUMBER_FILTER_TAGS=${TESTSUITE_TESTS}
     ports:
       - "9010:9010"
       - "9011:9011"
