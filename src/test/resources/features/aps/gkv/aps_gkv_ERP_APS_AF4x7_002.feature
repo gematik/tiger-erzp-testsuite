@@ -29,7 +29,8 @@ Funktion: eRp abgebend - ERP_APS_AF4x7_002 - GF Nachricht übermitteln
     Und TGR setze den default header "X-client-id" auf den Wert "${data.idp.clientId}"
     Und TGR setze den default header "X-redirect-uri" auf den Wert "${data.idp.redirectUrl}"
     Wenn TGR sende eine leere GET Anfrage an "${data.idp_client_service}"
-    Und TGR finde die letzte Anfrage mit Pfad "/" und Knoten "$..receiver" der mit "${data.dockerservices.idp.address}" übereinstimmt
+    Und TGR finde die letzte Anfrage mit Pfad "/" und Knoten "$..receiver.domain" der mit "${data.dockerservices.idp.ip}" übereinstimmt
+    Und TGR finde die letzte Anfrage mit Pfad "/" und Knoten "$..receiver.port" der mit "${data.dockerservices.idp.port}" übereinstimmt
     Dann TGR prüfe aktuelle Antwort stimmt im Knoten "$.responseCode" überein mit "200"
     Und TGR speichere Wert des Knotens "$.body" der aktuellen Antwort in der Variable "erp.access_token_arztpraxis"
 
@@ -108,7 +109,8 @@ Funktion: eRp abgebend - ERP_APS_AF4x7_002 - GF Nachricht übermitteln
     Und TGR setze den default header "X-client-id" auf den Wert "${data.idp.clientId}"
     Und TGR setze den default header "X-redirect-uri" auf den Wert "${data.idp.redirectUrl}"
     Wenn TGR sende eine leere GET Anfrage an "${data.idp_client_service}"
-    Und TGR finde die letzte Anfrage mit Pfad "/" und Knoten "$..receiver" der mit "${data.dockerservices.idp.address}" übereinstimmt
+    Und TGR finde die letzte Anfrage mit Pfad "/" und Knoten "$..receiver.domain" der mit "${data.dockerservices.idp.ip}" übereinstimmt
+    Und TGR finde die letzte Anfrage mit Pfad "/" und Knoten "$..receiver.port" der mit "${data.dockerservices.idp.port}" übereinstimmt
     Dann TGR prüfe aktuelle Antwort stimmt im Knoten "$.responseCode" überein mit "200"
     Und TGR speichere Wert des Knotens "$.body" der aktuellen Antwort in der Variable "erp.access_token_patient"
     Und TGR speichere Wert des Knotens "$.body.body.idNummer" der aktuellen Antwort in der Variable "erp.patient_kvnr"
@@ -146,7 +148,7 @@ Funktion: eRp abgebend - ERP_APS_AF4x7_002 - GF Nachricht übermitteln
     "id": "erp-communication-05-request-RezeptZuweisen",
     "meta": {
       "profile": [
-        "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_PR_Communication_DispReq|1.5"
+        "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_PR_Communication_DispReq|1.6"
       ]
     },
     "status": "unknown",
@@ -175,8 +177,8 @@ Funktion: eRp abgebend - ERP_APS_AF4x7_002 - GF Nachricht übermitteln
     ],
     "payload": [
       {
-        "contentString": "{ \"version\": 1, \"supplyOptionsType\": \"onPremise\", \"name\": \"Dr. Maximilian von Muster\", \"address\": [ \"wohnhaft bei Emilia Fischer\", \"Bundesallee 312\", \"123. OG\", \"12345 Berlin\" ], \"phone\": \"004916094858168\" }"
-      }
+         "contentString": "{ \"version\": 3, \"communicationType\": \"order\", \"transactionID\": \"8196b610-9b77-47ab-936e-362cd92ef2aa\", \"supplyOptionsType\": \"delivery\", \"firstname\": \"Hans\", \"lastname\": \"Dr. Maximilian von Muster\", \"address\": \"Bundesallee 312\", \"postcode\": \"12345\", \"city\": \"Berlin\", \"country\": \"DE\", \"phone\": \"004916094858168\" }"
+     }
     ]
   }
   """

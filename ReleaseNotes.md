@@ -2,6 +2,7 @@
 
 ## Release 1.1.3
 - algorithmVersion in Arzt bundle for t-rezept to 1.0.1 increased 
+- replace maven:3-eclipse-temurin-21-alpine with gematik1/osadl-alpine-openjdk21-jre
 
 ## Release 1.1.0
 - t-rezepts added for VPS and AVS
