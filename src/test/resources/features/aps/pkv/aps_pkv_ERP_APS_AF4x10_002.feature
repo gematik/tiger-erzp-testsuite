@@ -2,6 +2,16 @@
 
 #Test für APS
 #Testfall prüft das Abrufen von PKV-Abrechnungsdaten durch die Apotheke.
+#Testfall prüft das erneute Abrufen einer Quittung für ein E-Rezeptes.
+# Zu erfüllende Vorbedingungen:
+#   1) AuthN-Token anfordern für VPS,
+#   2) E-Rezept erzeugen,
+#   3) E-Rezept einstellen,
+#   4) Nachricht durch Patient einstellen,
+#   5) AuthN-Token anfordern für APS,
+#   6) Nachricht empfangen,
+#   7) Nachricht übermitteln,
+#   8) Nachricht durch Patient empfangen
 @APS_AF4x10_002
 @APS
 Funktion: eRp abgebend - ERP_APS_AF4x10_002 - GF PKV - eine spezifische Abrechnungsinfo abrufen
@@ -22,7 +32,8 @@ Funktion: eRp abgebend - ERP_APS_AF4x10_002 - GF PKV - eine spezifische Abrechnu
     Und TGR setze den default header "X-client-id" auf den Wert "${data.idp.clientId}"
     Und TGR setze den default header "X-redirect-uri" auf den Wert "${data.idp.redirectUrl}"
     Wenn TGR sende eine leere GET Anfrage an "${data.idp_client_service}"
-    Und TGR finde die letzte Anfrage mit Pfad "/" und Knoten "$..receiver" der mit "${data.dockerservices.idp.address}" übereinstimmt
+    Und TGR finde die letzte Anfrage mit Pfad "/" und Knoten "$..receiver.domain" der mit "${data.dockerservices.idp.ip}" übereinstimmt
+    Und TGR finde die letzte Anfrage mit Pfad "/" und Knoten "$..receiver.port" der mit "${data.dockerservices.idp.port}" übereinstimmt
     Dann TGR prüfe aktuelle Antwort stimmt im Knoten "$.responseCode" überein mit "200"
     Und TGR speichere Wert des Knotens "$.body" der aktuellen Antwort in der Variable "erp.access_token_arztpraxis"
 
@@ -117,8 +128,38 @@ Funktion: eRp abgebend - ERP_APS_AF4x10_002 - GF PKV - eine spezifische Abrechnu
     Und TGR prüfe aktuelle Antwort stimmt im Knoten "$.body.message.body" nicht überein mit "^Error:.*"
 
   @APS
+  Szenario: Vorbedingung: Als Patient ein IDP Access Token abholen
+    Gegeben sei TGR setze den default header "X-p12-bytes-base64" auf den Wert "!{resolve(file('src/test/resources/Patient_AUT_E256.p12.base64'))}"
+    Und TGR setze den default header "X-keystore-password" auf den Wert "00"
+    Und TGR setze den default header "X-scope" auf den Wert "${data.idp.scope}"
+    Und TGR setze den default header "X-discovery-document-address" auf den Wert "${data.idp.discoveryDocumentAddress}"
+    Und TGR setze den default header "X-client-id" auf den Wert "${data.idp.clientId}"
+    Und TGR setze den default header "X-redirect-uri" auf den Wert "${data.idp.redirectUrl}"
+    Wenn TGR sende eine leere GET Anfrage an "${data.idp_client_service}"
+    Und TGR finde die letzte Anfrage mit Pfad "/" und Knoten "$..receiver.domain" der mit "${data.dockerservices.idp.ip}" übereinstimmt
+    Und TGR finde die letzte Anfrage mit Pfad "/" und Knoten "$..receiver.port" der mit "${data.dockerservices.idp.port}" übereinstimmt
+    Dann TGR prüfe aktuelle Antwort stimmt im Knoten "$.responseCode" überein mit "200"
+    Und TGR speichere Wert des Knotens "$.body" der aktuellen Antwort in der Variable "erp.access_token_patient"
+    Und TGR speichere Wert des Knotens "$.body.body.idNummer" der aktuellen Antwort in der Variable "erp.patient_kvnr"
+
+  @APS
+  Szenario: Vorbedingung: Patient holt PKV-Abrechnungsinformationen
+    Und TGR setze folgende default headers:
+  """
+    Content-Type  = application/fhir+json; charset=UTF-8
+    Accept        = application/fhir+json
+    Authorization = Bearer ${erp.access_token_patient}
+    User-Agent    = ${data.user_agent}
+    X-api-key     = ${data.x_api_key}
+  """
+    Wenn TGR sende eine leere GET Anfrage an "${data.address_fachdienst_fdv}/ChargeItem/${erp.task_id}"
+    Und TGR finde die letzte Anfrage mit dem Pfad "/ChargeItem/${erp.task_id}"
+    Dann TGR prüfe aktuelle Antwort stimmt im Knoten "$.responseCode" überein mit "200"
+    Und TGR speichere Wert des Knotens "$.body..resource.identifier.[?(lowerCase(@.system.content.basicPath) =$ 'accesscode')].value.content" der aktuellen Antwort in der Variable "erp.patient_access_code"
+
+  @APS
   Szenario: Abrechnungsdaten abrufen
-    Gegeben sei TGR pausiere Testausführung mit Nachricht "Bitte rufen Sie Abrechnungsdaten ab."
+    Gegeben sei TGR pausiere Testausführung mit Nachricht "Bitte rufen Sie Abrechnungsdaten für den Patient mit dem AccessCode: ${erp.patient_access_code} ab"
     Dann TGR finde die letzte Anfrage mit Pfad ".*" und Knoten "$.body.message.path.basicPath" der mit "/ChargeItem/${erp.task_id}" übereinstimmt
     Dann TGR prüfe aktuelle Antwort stimmt im Knoten "$.body.message.responseCode" überein mit "200"
     Und TGR prüfe aktuelle Antwort stimmt im Knoten "$.body.message.body" nicht überein mit "^Error:.*"

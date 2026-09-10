@@ -30,7 +30,8 @@ Funktion: eRp abgebend - ERP_APS_AF4x9_002 - GF Gelesene Nachricht durch Abgeben
     Und TGR setze den default header "X-client-id" auf den Wert "${data.idp.clientId}"
     Und TGR setze den default header "X-redirect-uri" auf den Wert "${data.idp.redirectUrl}"
     Wenn TGR sende eine leere GET Anfrage an "${data.idp_client_service}"
-    Und TGR finde die letzte Anfrage mit Pfad "/" und Knoten "$..receiver" der mit "${data.dockerservices.idp.address}" übereinstimmt
+    Und TGR finde die letzte Anfrage mit Pfad "/" und Knoten "$..receiver.domain" der mit "${data.dockerservices.idp.ip}" übereinstimmt
+    Und TGR finde die letzte Anfrage mit Pfad "/" und Knoten "$..receiver.port" der mit "${data.dockerservices.idp.port}" übereinstimmt
     Dann TGR prüfe aktuelle Antwort stimmt im Knoten "$.responseCode" überein mit "200"
     Und TGR speichere Wert des Knotens "$.body" der aktuellen Antwort in der Variable "erp.access_token_arztpraxis"
 
@@ -109,7 +110,8 @@ Funktion: eRp abgebend - ERP_APS_AF4x9_002 - GF Gelesene Nachricht durch Abgeben
     Und TGR setze den default header "X-client-id" auf den Wert "${data.idp.clientId}"
     Und TGR setze den default header "X-redirect-uri" auf den Wert "${data.idp.redirectUrl}"
     Wenn TGR sende eine leere GET Anfrage an "${data.idp_client_service}"
-    Und TGR finde die letzte Anfrage mit Pfad "/" und Knoten "$..receiver" der mit "${data.dockerservices.idp.address}" übereinstimmt
+    Und TGR finde die letzte Anfrage mit Pfad "/" und Knoten "$..receiver.domain" der mit "${data.dockerservices.idp.ip}" übereinstimmt
+    Und TGR finde die letzte Anfrage mit Pfad "/" und Knoten "$..receiver.port" der mit "${data.dockerservices.idp.port}" übereinstimmt
     Dann TGR prüfe aktuelle Antwort stimmt im Knoten "$.responseCode" überein mit "200"
     Und TGR speichere Wert des Knotens "$.body" der aktuellen Antwort in der Variable "erp.access_token_patient"
     Und TGR speichere Wert des Knotens "$.body.body.idNummer" der aktuellen Antwort in der Variable "erp.patient_kvnr"

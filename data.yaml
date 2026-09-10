@@ -18,6 +18,8 @@ aps_telematik_id: ""
 dockerservices:
   idp: 
     address: idp-client-service:8080
+    ip: idp-client-service
+    port: 8080
   vauencryptingproxy:
     address: vau-encrypting-proxy:8080
   vauencryptingproxypatient:

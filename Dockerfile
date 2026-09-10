@@ -15,7 +15,7 @@
 # Docker Rules from https://wiki.gematik.de/display/DEV/Docker+Rules
 
 # used java 21 image due to different m2 respository location
-FROM maven:3-eclipse-temurin-21-alpine
+FROM gematik1/osadl-alpine-openjdk21-jre:1.0.12
 
 # The STOPSIGNAL instruction sets the system call signal that will be sent to the container to exit
 # SIGTERM = 15 - https://de.wikipedia.org/wiki/Signal_(Unix)
@@ -37,16 +37,16 @@ LABEL de.gematik.vendor="gematik GmbH" \
 
 COPY . /app
 WORKDIR /app
-
-RUN mkdir -p /app/report
-
-RUN /usr/sbin/adduser -D rzpttester
-RUN chown -R rzpttester /app
+USER root
+RUN apk add --no-cache maven \
+&& mkdir -p /app/report \
+&& /usr/sbin/adduser -D rzpttester \
+&& chown -R rzpttester /app
 
 USER rzpttester
 
 RUN mkdir -p /home/rzpttester/.m2/repository
 
 # Command to be executed.
-ENTRYPOINT ["bash", "-c", "rm -rf /app/report/* ; mvn clean verify || true ; mv -v /app/target/*report.zip /app/report/"]
+ENTRYPOINT ["sh", "-c", "rm -rf /app/report/* ; mvn clean verify || true ; mv -v /app/target/*report.zip /app/report/"]
 
